@@ -3,11 +3,11 @@ import random
 # Vetores
 vt_lucro_dos_objetos = [24, 13, 23, 15, 16]
 vt_peso_dos_objetos = [12, 7, 11, 8, 9]
-populacao = []
-proxima_populacao = []
-melhor_fitness_da_geracao = []
-media_fitness_da_geracao = []
-pior_fitness_da_geracao = []
+vt_populacao = []
+vt_proxima_populacao = []
+vt_melhor_fitness_da_geracao = []
+vt_media_fitness_da_geracao = []
+vt_pior_fitness_da_geracao = []
 
 
 # Variaveis
@@ -37,13 +37,13 @@ def funcao_objetivo(solucao):
 
 
 for i in range (v_tamanho_da_populacao):
-    populacao.append([0] * v_tamanho_da_solucao)
-    proxima_populacao.append([0] * v_tamanho_da_solucao)
+    vt_populacao.append([0] * v_tamanho_da_solucao)
+    vt_proxima_populacao.append([0] * v_tamanho_da_solucao)
 
-proxima_populacao.append([0] * v_tamanho_da_solucao)
+vt_proxima_populacao.append([0] * v_tamanho_da_solucao)
 
 def avaliar_solucao(indice):
-    v_fitness[indice] = funcao_objetivo(populacao[indice])
+    v_fitness[indice] = funcao_objetivo(vt_populacao[indice])
 
 def avaliar_populacao():
     for i in range(v_tamanho_da_populacao):
@@ -58,18 +58,18 @@ def identificar_melhor_solucao():
 
 def elitismo():
     indice_da_melhor_solucao = identificar_melhor_solucao()
-    proxima_populacao[v_tamanho_da_populacao] = populacao[indice_da_melhor_solucao]
+    vt_proxima_populacao[v_tamanho_da_populacao] = vt_populacao[indice_da_melhor_solucao]
     v_fitness_proxima_populacao[v_tamanho_da_populacao] = v_fitness[indice_da_melhor_solucao]
 
 def mutacao(indice):
     for i in range(v_tamanho_da_solucao):
         if random.randint(0, 100) <= v_percentual_de_realizar_mutacao:
-            if populacao[indice][i] == 0:
-                proxima_populacao[indice][i] = 1
+            if vt_populacao[indice][i] == 0:
+                vt_proxima_populacao[indice][i] = 1
             else:
-                proxima_populacao[indice][i] = 0
+                vt_proxima_populacao[indice][i] = 0
         else:
-            proxima_populacao[indice][i] = populacao[indice][i]
+            vt_proxima_populacao[indice][i] = vt_populacao[indice][i]
 
 def identificar_pior_solucao_da_proxima_populacao():
     indice_da_pior_solucao = 0
@@ -81,7 +81,7 @@ def identificar_pior_solucao_da_proxima_populacao():
 def gerar_solucao_inicial():
     for i in range(v_tamanho_da_populacao):
         for j in range(v_tamanho_da_solucao):
-            populacao[i][j] = random.randint(0, 1)
+            vt_populacao[i][j] = random.randint(0, 1)
 
 def identificar_pior_solucao_da_populacao_atual():
     indice_da_pior_solucao = 0
@@ -92,22 +92,22 @@ def identificar_pior_solucao_da_populacao_atual():
 
 def gerar_proxima_populacao():
     pior = identificar_pior_solucao_da_proxima_populacao()
-    del proxima_populacao[pior]
+    del vt_proxima_populacao[pior]
     del v_fitness_proxima_populacao[pior]
 
-    proxima_populacao.append(proxima_populacao[0])
+    vt_proxima_populacao.append(vt_proxima_populacao[0])
     v_fitness_proxima_populacao.append(v_fitness_proxima_populacao[0])
 
 def criterio_de_parada_atingido(quantidade_atual_de_avaliacoes):
     return quantidade_atual_de_avaliacoes >= v_quantidade_total_de_avaliacoes
 
 def relatorio_de_convergencia_da_geracao():
-    melhor_fitness_da_geracao.append(v_fitness[identificar_melhor_solucao()])
-    pior_fitness_da_geracao.append(v_fitness[identificar_pior_solucao_da_populacao_atual()])
+    vt_melhor_fitness_da_geracao.append(v_fitness[identificar_melhor_solucao()])
+    vt_pior_fitness_da_geracao.append(v_fitness[identificar_pior_solucao_da_populacao_atual()])
     media = 0
     for i in v_fitness:
         media = media+i
-    media_fitness_da_geracao.append(media / len(v_fitness))
+    vt_media_fitness_da_geracao.append(media / len(v_fitness))
 
 def cruzamento():
 
@@ -115,8 +115,8 @@ def cruzamento():
 
     indice_solucao_b = identificar_melhor_solucao()
 
-    solucao_a = populacao[indice_solucao_a]
-    solucao_b = populacao[indice_solucao_b]
+    solucao_a = vt_populacao[indice_solucao_a]
+    solucao_b = vt_populacao[indice_solucao_b]
 
     ponto_de_corte = random.randint(0, v_tamanho_da_solucao - 1)
 
@@ -131,7 +131,7 @@ def cruzamento():
             nova_solucao_b.append(solucao_a[i])
             nova_solucao_a.append(solucao_b[i])
 
-    proxima_populacao = populacao.copy()
+    proxima_populacao = vt_populacao.copy()
     proxima_populacao[indice_solucao_a] = nova_solucao_a
     proxima_populacao[indice_solucao_b] = nova_solucao_b
 
@@ -146,7 +146,7 @@ def Main():
         for i in range(v_tamanho_da_populacao):
             cruzamento()
             mutacao(i)
-            v_fitness_proxima_populacao[i] = funcao_objetivo(proxima_populacao[i])
+            v_fitness_proxima_populacao[i] = funcao_objetivo(vt_proxima_populacao[i])
             quantidade_atual_de_avaliacoes = quantidade_atual_de_avaliacoes + 1
         gerar_proxima_populacao()
 
@@ -154,7 +154,7 @@ def Main():
         contador = contador + 1
     print("Melhor individuo")
     melhor_final = identificar_melhor_solucao()
-    print(populacao[melhor_final])
+    print(vt_populacao[melhor_final])
     print("Fitness =", v_fitness[melhor_final])
 
 repete = 30
